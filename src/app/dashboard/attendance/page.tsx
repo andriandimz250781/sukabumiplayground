@@ -70,7 +70,7 @@ export default function AttendancePage() {
     if (userJson) {
       const user = JSON.parse(userJson);
       const userRole = user.role?.toLowerCase();
-      const allowedRoles = ['owner', 'manager', 'supervisor'];
+      const allowedRoles = ['owner', 'manager', 'supervisor', 'admin'];
       if (allowedRoles.includes(userRole)) {
         setIsAuthorized(true);
       } else {

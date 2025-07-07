@@ -131,7 +131,7 @@ export default function CashierPage() {
     if (userJson) {
       const user = JSON.parse(userJson);
       const userRole = user.role?.toLowerCase();
-      const allowedRoles = ['owner', 'manager', 'supervisor', 'kasir'];
+      const allowedRoles = ['owner', 'manager', 'supervisor', 'kasir', 'admin'];
       if (allowedRoles.includes(userRole)) {
         setIsAuthorized(true);
       } else {

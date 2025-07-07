@@ -67,6 +67,7 @@ export default function SignupPage() {
         supervisor: 'SPV',
         kasir: 'KSR',
         staff: 'STF',
+        admin: 'ADM',
       };
       
       const prefix = rolePrefixMap[role];
@@ -313,6 +314,7 @@ export default function SignupPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="owner">Owner</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="manager">Manager</SelectItem>
                   <SelectItem value="supervisor">Supervisor</SelectItem>
                   <SelectItem value="kasir">Kasir</SelectItem>

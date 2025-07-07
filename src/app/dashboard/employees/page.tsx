@@ -74,7 +74,7 @@ export default function EmployeesPage() {
     if (userJson) {
       const user = JSON.parse(userJson);
       const userRole = user.role?.toLowerCase();
-      const allowedRoles = ['owner', 'manager', 'supervisor'];
+      const allowedRoles = ['owner', 'manager', 'supervisor', 'admin'];
       if (allowedRoles.includes(userRole)) {
         setIsAuthorized(true);
       } else {
@@ -108,6 +108,7 @@ export default function EmployeesPage() {
   const getBadgeVariant = (role: string) => {
     switch (role?.toLowerCase()) {
       case "owner": return "default";
+      case "admin": return "default";
       case "manager": return "secondary";
       case "supervisor": return "outline";
       case "kasir": return "destructive";
@@ -294,6 +295,7 @@ export default function EmployeesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="owner">Owner</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
                     <SelectItem value="supervisor">Supervisor</SelectItem>
                     <SelectItem value="kasir">Kasir</SelectItem>

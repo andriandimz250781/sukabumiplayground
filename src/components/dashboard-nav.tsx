@@ -88,7 +88,7 @@ export function DashboardNav() {
       menuItems.push({ href: "/dashboard/absen", icon: UsersRound, label: "Absen" });
   } else {
       const karyawanSubItems: SubMenuItem[] = [{ href: "/dashboard/absen", label: "Absen" }];
-      if (['owner', 'manager', 'supervisor'].includes(role)) {
+      if (['owner', 'manager', 'supervisor', 'admin'].includes(role)) {
           karyawanSubItems.push({ href: "/dashboard/employees", label: "Data Karyawan" });
           karyawanSubItems.push({ href: "/dashboard/attendance", label: "Rekap Absen" });
       }
@@ -100,7 +100,7 @@ export function DashboardNav() {
       });
   }
 
-  if (['owner', 'manager', 'supervisor', 'kasir'].includes(role)) {
+  if (['owner', 'manager', 'supervisor', 'kasir', 'admin'].includes(role)) {
       menuItems.push(
           {
               href: "/dashboard/members",
@@ -121,7 +121,7 @@ export function DashboardNav() {
   }
   
   let bottomMenuItems: MenuItem[] = []
-  if (['owner', 'manager', 'supervisor'].includes(role)) {
+  if (['owner', 'manager', 'supervisor', 'admin'].includes(role)) {
       bottomMenuItems.push({ id: "settings", href: "/dashboard/settings", icon: Settings, label: "Pengaturan" });
       bottomMenuItems.push({ id: "reset", href: "/dashboard/reset", icon: Trash2, label: "Reset Data" });
   }
