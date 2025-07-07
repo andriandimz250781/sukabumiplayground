@@ -1,3 +1,4 @@
+
 'use client';
 import { Button } from "@/components/ui/button";
 import {
@@ -15,24 +16,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format, isSameMonth } from "date-fns";
 import { id } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -104,15 +94,6 @@ export default function AttendancePage() {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [isAuthorized]);
-
-  const handleResetAttendance = () => {
-    localStorage.removeItem('sukabumi-attendance');
-    setAttendanceData([]);
-    toast({
-      title: "Riwayat Berhasil Direset",
-      description: "Semua data riwayat absensi telah dihapus.",
-    });
-  };
   
   const holidays: Record<string, { name: string; date: Date }> = {
     // 2025 Holidays
@@ -258,28 +239,6 @@ export default function AttendancePage() {
                 />
               </PopoverContent>
             </Popover>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Reset Riwayat
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Apakah Anda Yakin?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Tindakan ini akan menghapus semua riwayat absensi secara permanen. Data ini tidak dapat dipulihkan.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleResetAttendance}>
-                    Ya, Hapus Riwayat
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
         </div>
       </div>
 
