@@ -33,7 +33,7 @@ export default function ResetPage() {
     if (userJson) {
       const user = JSON.parse(userJson);
       const userRole = user.role?.toLowerCase();
-      const allowedRoles = ['owner', 'manager', 'supervisor', 'admin'];
+      const allowedRoles = ['admin'];
       if (allowedRoles.includes(userRole)) {
         setIsAuthorized(true);
       } else {

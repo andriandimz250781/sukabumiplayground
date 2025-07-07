@@ -123,6 +123,8 @@ export function DashboardNav() {
   let bottomMenuItems: MenuItem[] = []
   if (['owner', 'manager', 'supervisor', 'admin'].includes(role)) {
       bottomMenuItems.push({ id: "settings", href: "/dashboard/settings", icon: Settings, label: "Pengaturan" });
+  }
+  if (role === 'admin') {
       bottomMenuItems.push({ id: "reset", href: "/dashboard/reset", icon: Trash2, label: "Reset Data" });
   }
   bottomMenuItems.push({ id: "logout", href: "/login", icon: LogOut, label: "Keluar" });
