@@ -161,7 +161,7 @@ export default function SignupPage() {
     if (role === 'admin' && isAdminCreated) {
         toast({
             title: "Pendaftaran Gagal",
-            description: "Posisi Admin sudah terisi. Silahkan hubungi IT Administrator anda.",
+            description: "Posisi IT Administrator sudah terisi. Silahkan hubungi IT Administrator anda.",
             variant: "destructive",
         });
         return;
@@ -333,7 +333,7 @@ export default function SignupPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="owner">Owner</SelectItem>
-                  <SelectItem value="admin" disabled={isAdminCreated}>Admin</SelectItem>
+                  <SelectItem value="admin" disabled={isAdminCreated}>IT Administrator</SelectItem>
                   <SelectItem value="manager">Manager</SelectItem>
                   <SelectItem value="supervisor">Supervisor</SelectItem>
                   <SelectItem value="kasir">Kasir</SelectItem>
@@ -341,7 +341,7 @@ export default function SignupPage() {
                 </SelectContent>
               </Select>
               {isAdminCreated && (
-                <p className="text-xs text-muted-foreground">Posisi Admin sudah terisi. Hubungi IT Administrator jika butuh perubahan.</p>
+                <p className="text-xs text-muted-foreground">Posisi IT Administrator sudah terisi. Hubungi IT Administrator Anda jika butuh perubahan.</p>
               )}
             </div>
              <div className="space-y-2">

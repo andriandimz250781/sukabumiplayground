@@ -59,6 +59,15 @@ interface Employee {
   registrationTime?: string;
 }
 
+const roleDisplayMap: { [key: string]: string } = {
+  owner: "Owner",
+  admin: "IT Administrator",
+  manager: "Manager",
+  supervisor: "Supervisor",
+  kasir: "Kasir",
+  staff: "Staff"
+};
+
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -242,7 +251,7 @@ export default function EmployeesPage() {
                       <TableCell className="font-medium">{employee.fullname}</TableCell>
                       <TableCell>{employee.employeeId}</TableCell>
                       <TableCell>
-                        <Badge variant={getBadgeVariant(employee.role)}>{employee.role}</Badge>
+                        <Badge variant={getBadgeVariant(employee.role)}>{roleDisplayMap[employee.role.toLowerCase()] || employee.role}</Badge>
                       </TableCell>
                       <TableCell>{employee.dateOfBirth}</TableCell>
                       <TableCell>{employee.phone}</TableCell>
@@ -295,7 +304,7 @@ export default function EmployeesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="owner">Owner</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="admin">IT Administrator</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
                     <SelectItem value="supervisor">Supervisor</SelectItem>
                     <SelectItem value="kasir">Kasir</SelectItem>
