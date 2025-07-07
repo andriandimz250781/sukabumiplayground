@@ -76,7 +76,7 @@ export default function SignupPage() {
         supervisor: 'SPV',
         kasir: 'KSR',
         staff: 'STF',
-        admin: 'ADM',
+        admin: 'ITA',
       };
       
       const prefix = rolePrefixMap[role];
