@@ -23,6 +23,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+type ResetOption = {
+  title: string;
+  description: string;
+  keys: string[];
+  toastTitle: string;
+};
+
 export default function ResetPage() {
   const { toast } = useToast();
   const router = useRouter();
@@ -60,10 +67,8 @@ export default function ResetPage() {
       'sukabumi-settings',
     ];
     
-    // Clear all localStorage keys
     keysToReset.forEach(key => localStorage.removeItem(key));
     
-    // Clear sessionStorage to log out the user
     sessionStorage.removeItem('sukabumi-active-user');
     
     toast({
@@ -71,10 +76,63 @@ export default function ResetPage() {
       description: "Semua data aplikasi telah dihapus. Anda akan diarahkan ke halaman login.",
     });
 
-    // Redirect to login page after a short delay
     setTimeout(() => {
         router.push('/login');
     }, 1500);
+  };
+  
+  const resetOptions: ResetOption[] = [
+    {
+      title: "Reset Data Karyawan",
+      description: "Menghapus semua data pengguna, termasuk login dan password. Tidak menghapus data absensi terkait.",
+      keys: ['sukabumi-users'],
+      toastTitle: "Data Karyawan Direset"
+    },
+    {
+      title: "Reset Rekap Absen",
+      description: "Menghapus semua riwayat absensi karyawan. Data karyawan tidak akan terhapus.",
+      keys: ['sukabumi-attendance'],
+      toastTitle: "Rekap Absen Direset"
+    },
+    {
+      title: "Reset Data Member",
+      description: "Menghapus semua data member yang terdaftar.",
+      keys: ['sukabumi-members'],
+      toastTitle: "Data Member Direset"
+    },
+    {
+      title: "Reset Data Shopping",
+      description: "Menghapus semua data pesanan makanan/minuman/barang yang sedang berjalan (sebelum checkout).",
+      keys: ['sukabumi-customer-orders'],
+      toastTitle: "Data Shopping Direset"
+    },
+    {
+      title: "Reset Transaksi Kasir",
+      description: "Menghapus semua riwayat transaksi, data pelanggan aktif, dan nomor urut harian.",
+      keys: ['sukabumi-transactions', 'sukabumi-active-customers', 'sukabumi-daily-sequence'],
+      toastTitle: "Transaksi Kasir Direset"
+    },
+    {
+      title: "Reset Inventory & Aset",
+      description: "Menghapus semua data stok inventaris dan daftar aset.",
+      keys: ['sukabumi-inventory', 'sukabumi-assets'],
+      toastTitle: "Inventory & Aset Direset"
+    },
+    {
+      title: "Reset Pengaturan",
+      description: "Mengembalikan semua pengaturan umum ke nilai default pabrik.",
+      keys: ['sukabumi-settings'],
+      toastTitle: "Pengaturan Direset"
+    },
+  ];
+
+  const handleSpecificReset = (option: ResetOption) => {
+    option.keys.forEach(key => localStorage.removeItem(key));
+    toast({
+      title: option.toastTitle,
+      description: `Data untuk ${option.title} telah berhasil dihapus.`,
+    });
+    window.dispatchEvent(new Event('storage'));
   };
   
   if (!isAuthorized) {
@@ -124,6 +182,44 @@ export default function ResetPage() {
               </AlertDialogContent>
             </AlertDialog>
           </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Reset Data Spesifik</CardTitle>
+          <CardDescription>
+            Pilih data spesifik yang ingin Anda reset. Tindakan ini tidak akan me-logout Anda.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {resetOptions.map((option) => (
+            <div key={option.title} className="flex items-center justify-between p-4 border rounded-lg">
+              <div>
+                <h4 className="font-semibold">{option.title}</h4>
+                <p className="text-sm text-muted-foreground">{option.description}</p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline">Reset</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Anda akan menghapus {option.title.toLowerCase()} secara permanen. Data ini tidak dapat dipulihkan.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleSpecificReset(option)}>
+                      Ya, Reset Data
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          ))}
+        </CardContent>
       </Card>
     </div>
   );
