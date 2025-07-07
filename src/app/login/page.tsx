@@ -74,7 +74,11 @@ export default function LoginPage() {
     const users = JSON.parse(localStorage.getItem('sukabumi-users') || '[]');
     const user = users.find((u: any) => u.phone === phone);
     if (user) {
-      setEmployeeId(user.employeeId);
+      if (user.role === 'admin') {
+        setEmployeeId('IT ADMINISTRATOR');
+      } else {
+        setEmployeeId(user.employeeId);
+      }
       setEmployeeName(user.fullname);
     } else {
       setEmployeeId('');
