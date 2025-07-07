@@ -17,19 +17,8 @@ import {
 import { useEffect, useState, useRef } from "react";
 import { format, isToday, isThisWeek, isThisMonth, isThisYear } from "date-fns";
 import { Input } from "@/components/ui/input";
-import { Search, Trash2, Eye, Printer, Download, Share2 } from "lucide-react";
+import { Search, Eye, Printer, Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -158,15 +147,6 @@ export default function ReportsPage() {
 
     setFilteredTransactions(results);
   }, [searchTerm, transactions, filter]);
-  
-  const handleResetTransactions = () => {
-    localStorage.removeItem('sukabumi-transactions');
-    setTransactions([]);
-    toast({
-      title: "Riwayat Transaksi Dihapus",
-      description: "Semua data riwayat transaksi telah dihapus.",
-    });
-  };
 
   const formatCurrency = (amount?: number) => `Rp ${(amount || 0).toLocaleString('id-ID')}`;
   
@@ -286,28 +266,6 @@ export default function ReportsPage() {
               <h1 className="text-2xl font-bold font-headline">Laporan Transaksi</h1>
               <p className="text-muted-foreground">Lihat riwayat semua transaksi.</p>
           </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Reset Transaksi
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Apakah Anda Yakin?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Tindakan ini akan menghapus semua riwayat transaksi secara permanen. Data ini tidak dapat dipulihkan.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleResetTransactions}>
-                    Ya, Hapus Riwayat
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
         </div>
 
         <Card>
