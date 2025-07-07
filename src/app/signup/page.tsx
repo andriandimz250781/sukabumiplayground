@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -45,8 +46,16 @@ export default function SignupPage() {
   // State for phone input and validation
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  
+  // State for admin role restriction
+  const [isAdminCreated, setIsAdminCreated] = useState(false);
 
   useEffect(() => {
+    // Check if an admin already exists
+    const users = JSON.parse(localStorage.getItem('sukabumi-users') || '[]');
+    const adminExists = users.some((user: any) => user.role === 'admin');
+    setIsAdminCreated(adminExists);
+
     const today = new Date();
     setRegistrationDate(format(today, 'dd-MM-yyyy'));
     setRegistrationTime(format(today, 'HH:mm:ss'));
@@ -146,6 +155,16 @@ export default function SignupPage() {
         variant: "destructive",
       });
       return;
+    }
+    
+    // Final check for admin role before submission
+    if (role === 'admin' && isAdminCreated) {
+        toast({
+            title: "Pendaftaran Gagal",
+            description: "Posisi Admin sudah terisi. Silahkan hubungi IT Administrator anda.",
+            variant: "destructive",
+        });
+        return;
     }
 
     const form = e.currentTarget as HTMLFormElement;
@@ -314,13 +333,16 @@ export default function SignupPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="owner">Owner</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="admin" disabled={isAdminCreated}>Admin</SelectItem>
                   <SelectItem value="manager">Manager</SelectItem>
                   <SelectItem value="supervisor">Supervisor</SelectItem>
                   <SelectItem value="kasir">Kasir</SelectItem>
                   <SelectItem value="staff">Staff</SelectItem>
                 </SelectContent>
               </Select>
+              {isAdminCreated && (
+                <p className="text-xs text-muted-foreground">Posisi Admin sudah terisi. Hubungi IT Administrator jika butuh perubahan.</p>
+              )}
             </div>
              <div className="space-y-2">
               <Label htmlFor="employeeId">ID Karyawan</Label>
