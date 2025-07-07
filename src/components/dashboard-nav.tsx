@@ -13,6 +13,7 @@ import {
   ScanLine,
   Settings,
   ShoppingCart,
+  Trash2,
   Users,
   UsersRound,
 } from "lucide-react"
@@ -122,6 +123,7 @@ export function DashboardNav() {
   let bottomMenuItems: MenuItem[] = []
   if (['owner', 'manager', 'supervisor'].includes(role)) {
       bottomMenuItems.push({ id: "settings", href: "/dashboard/settings", icon: Settings, label: "Pengaturan" });
+      bottomMenuItems.push({ id: "reset", href: "/dashboard/settings", icon: Trash2, label: "Reset Data" });
   }
   bottomMenuItems.push({ id: "logout", href: "/login", icon: LogOut, label: "Keluar" });
 
@@ -166,7 +168,7 @@ export function DashboardNav() {
       <div className="mt-auto">
         <SidebarMenu>
           {bottomMenuItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
+            <SidebarMenuItem key={item.label}>
               <SidebarMenuButton asChild tooltip={item.label}>
                 <Link
                   href={item.href}
