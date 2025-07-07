@@ -11,21 +11,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Trash2 } from "lucide-react";
+import { Save } from "lucide-react";
 import { addActivityLog } from "@/lib/logger";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export default function SettingsPage() {
   const { toast } = useToast();
@@ -77,38 +66,6 @@ export default function SettingsPage() {
       description: "Perubahan yang Anda buat telah berhasil disimpan.",
     });
   };
-
-  const handleResetData = () => {
-    const keysToReset = [
-      'sukabumi-users',
-      'sukabumi-members',
-      'sukabumi-attendance',
-      'sukabumi-active-customers',
-      'sukabumi-customer-orders',
-      'sukabumi-transactions',
-      'sukabumi-activity-logs',
-      'sukabumi-daily-sequence',
-      'sukabumi-inventory',
-      'sukabumi-assets',
-      'sukabumi-settings',
-    ];
-    
-    // Clear all localStorage keys
-    keysToReset.forEach(key => localStorage.removeItem(key));
-    
-    // Clear sessionStorage to log out the user
-    sessionStorage.removeItem('sukabumi-active-user');
-    
-    toast({
-      title: "Data Berhasil Direset",
-      description: "Semua data aplikasi telah dihapus. Anda akan diarahkan ke halaman login.",
-    });
-
-    // Redirect to login page after a short delay
-    setTimeout(() => {
-        router.push('/login');
-    }, 1500);
-  };
   
   if (!isAuthorized) {
     return (
@@ -155,38 +112,6 @@ export default function SettingsPage() {
             </Button>
           </CardFooter>
         </form>
-      </Card>
-      
-      <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle>Reset</CardTitle>
-            <CardDescription>
-              Tindakan di bawah ini bersifat permanen dan tidak dapat diurungkan.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash2 className="mr-2 h-4 w-4" /> Reset Semua Data Aplikasi
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Anda akan menghapus semua data aplikasi, termasuk ID Karyawan dan ID Member, yang akan direset kembali ke nomor urut 1. Tindakan ini tidak dapat mengembalikan data yang tersimpan.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleResetData}>
-                    Ya, Hapus Semua Data
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </CardContent>
       </Card>
     </div>
   );
