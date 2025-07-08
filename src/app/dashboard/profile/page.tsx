@@ -38,6 +38,7 @@ export default function ProfilePage() {
     const [formData, setFormData] = useState<User | null>(null);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
     useEffect(() => {
         const userJson = sessionStorage.getItem('sukabumi-active-user');
@@ -68,13 +69,19 @@ export default function ProfilePage() {
 
         let passwordToSave = user.password;
 
-        // If the new password field is filled, user is trying to change their password
         if (newPassword) {
-            // Check if the current password is correct
             if (user.password !== currentPassword) {
                 toast({
                     title: "Gagal Menyimpan",
                     description: "Password saat ini yang Anda masukkan salah.",
+                    variant: "destructive",
+                });
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                 toast({
+                    title: "Gagal Menyimpan",
+                    description: "Password baru dan konfirmasi password tidak cocok.",
                     variant: "destructive",
                 });
                 return;
@@ -104,6 +111,7 @@ export default function ProfilePage() {
                 setIsEditing(false);
                 setCurrentPassword('');
                 setNewPassword('');
+                setConfirmNewPassword('');
 
             } else {
                  toast({
@@ -120,6 +128,7 @@ export default function ProfilePage() {
         setFormData(user);
         setCurrentPassword('');
         setNewPassword('');
+        setConfirmNewPassword('');
     }
 
     if (!user || !formData) {
@@ -203,19 +212,19 @@ export default function ProfilePage() {
                         )}
                     </div>
                      {isEditing && (
-                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1">
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">
+                           <div className="space-y-1 md:col-span-2">
                                 <Label htmlFor="currentPassword">Password Saat Ini</Label>
                                 <Input 
                                     id="currentPassword" 
                                     name="currentPassword" 
                                     type="password"
-                                    placeholder="Isi untuk ubah password" 
+                                    placeholder="Isi untuk mengubah password" 
                                     value={currentPassword}
                                     onChange={(e) => setCurrentPassword(e.target.value)}
                                 />
                             </div>
-                             <div className="space-y-1">
+                            <div className="space-y-1">
                                 <Label htmlFor="newPassword">Password Baru (opsional)</Label>
                                 <Input 
                                     id="newPassword" 
@@ -226,6 +235,18 @@ export default function ProfilePage() {
                                     onChange={(e) => setNewPassword(e.target.value)}
                                 />
                                 <p className="text-xs text-muted-foreground">Kosongkan jika tidak ingin mengubah.</p>
+                            </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="confirmNewPassword">Ulangi Password Baru</Label>
+                                <Input
+                                    id="confirmNewPassword"
+                                    name="confirmNewPassword"
+                                    type="password"
+                                    placeholder="Ulangi password baru"
+                                    value={confirmNewPassword}
+                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                    disabled={!newPassword}
+                                />
                             </div>
                         </div>
                     )}
