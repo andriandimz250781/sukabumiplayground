@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
-import { LogIn, LogOut, Users } from "lucide-react";
+import { LogIn, LogOut, Users, Eye, EyeOff } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -60,6 +60,7 @@ export default function AbsenPage() {
   // State for password confirmation dialog
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [actionToConfirm, setActionToConfirm] = useState<'in' | 'out' | null>(null);
   const [userToConfirm, setUserToConfirm] = useState<User | null>(null);
 
@@ -217,6 +218,7 @@ export default function AbsenPage() {
     setIsPasswordDialogOpen(false);
     setIsOtherUserDialogOpen(false);
     setPassword('');
+    setShowPassword(false);
     setActionToConfirm(null);
     setUserToConfirm(null);
     setDialogPhone('');
@@ -365,14 +367,26 @@ export default function AbsenPage() {
         </DialogHeader>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input 
-            id="password" 
-            type="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handlePasswordConfirm(); }}
-            autoComplete="current-password"
-          />
+          <div className="relative">
+            <Input 
+              id="password" 
+              type={showPassword ? "text" : "password"} 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handlePasswordConfirm(); }}
+              autoComplete="current-password"
+            />
+            <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute inset-y-0 right-0 h-full px-3"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+            >
+                {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+            </Button>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setIsPasswordDialogOpen(false)}>Batal</Button>

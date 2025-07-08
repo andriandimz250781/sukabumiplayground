@@ -27,6 +27,7 @@ import { Logo } from "@/components/logo";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { addActivityLog } from "@/lib/logger";
+import { Eye, EyeOff } from "lucide-react";
 
 interface AttendanceEntry {
   employeeId: string;
@@ -42,6 +43,7 @@ export default function LoginPage() {
   const [phone, setPhone] = useState('');
   const [employeeId, setEmployeeId] = useState('');
   const [employeeName, setEmployeeName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // State for the attendance dialog
   const [isAttendanceDialogOpen, setIsAttendanceDialogOpen] = useState(false);
@@ -219,7 +221,25 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" required autoComplete="new-password" />
+              <div className="relative">
+                <Input 
+                    id="password" 
+                    name="password" 
+                    type={showPassword ? "text" : "password"} 
+                    required 
+                    autoComplete="new-password" 
+                />
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute inset-y-0 right-0 h-full px-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                >
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                </Button>
+              </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">

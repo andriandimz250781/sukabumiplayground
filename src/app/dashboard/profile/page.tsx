@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Card,
@@ -14,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Save } from "lucide-react";
+import { Pencil, Save, Eye, EyeOff } from "lucide-react";
 import { addActivityLog } from "@/lib/logger";
 
 interface User {
@@ -39,6 +40,12 @@ export default function ProfilePage() {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    
+    // Password visibility states
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
 
     useEffect(() => {
         const userJson = sessionStorage.getItem('sukabumi-active-user');
@@ -112,6 +119,9 @@ export default function ProfilePage() {
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmNewPassword('');
+                setShowCurrentPassword(false);
+                setShowNewPassword(false);
+                setShowConfirmNewPassword(false);
 
             } else {
                  toast({
@@ -129,6 +139,9 @@ export default function ProfilePage() {
         setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
+        setShowCurrentPassword(false);
+        setShowNewPassword(false);
+        setShowConfirmNewPassword(false);
     }
 
     if (!user || !formData) {
@@ -215,38 +228,75 @@ export default function ProfilePage() {
                         <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">
                            <div className="space-y-1 md:col-span-2">
                                 <Label htmlFor="currentPassword">Password Saat Ini</Label>
-                                <Input 
-                                    id="currentPassword" 
-                                    name="currentPassword" 
-                                    type="password"
-                                    placeholder="Isi untuk mengubah password" 
-                                    value={currentPassword}
-                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                />
+                                <div className="relative">
+                                    <Input 
+                                        id="currentPassword" 
+                                        name="currentPassword" 
+                                        type={showCurrentPassword ? "text" : "password"}
+                                        placeholder="Isi untuk mengubah password" 
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                    />
+                                     <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute inset-y-0 right-0 h-full px-3"
+                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                        tabIndex={-1}
+                                    >
+                                        {showCurrentPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                                    </Button>
+                                </div>
                             </div>
                             <div className="space-y-1">
                                 <Label htmlFor="newPassword">Password Baru (opsional)</Label>
-                                <Input 
-                                    id="newPassword" 
-                                    name="newPassword" 
-                                    type="password"
-                                    placeholder="Isi password baru" 
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                />
+                                <div className="relative">
+                                    <Input 
+                                        id="newPassword" 
+                                        name="newPassword" 
+                                        type={showNewPassword ? "text" : "password"}
+                                        placeholder="Isi password baru" 
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute inset-y-0 right-0 h-full px-3"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                        tabIndex={-1}
+                                    >
+                                        {showNewPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                                    </Button>
+                                </div>
                                 <p className="text-xs text-muted-foreground">Kosongkan jika tidak ingin mengubah.</p>
                             </div>
                             <div className="space-y-1">
                                 <Label htmlFor="confirmNewPassword">Ulangi Password Baru</Label>
-                                <Input
-                                    id="confirmNewPassword"
-                                    name="confirmNewPassword"
-                                    type="password"
-                                    placeholder="Ulangi password baru"
-                                    value={confirmNewPassword}
-                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                                    disabled={!newPassword}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="confirmNewPassword"
+                                        name="confirmNewPassword"
+                                        type={showConfirmNewPassword ? "text" : "password"}
+                                        placeholder="Ulangi password baru"
+                                        value={confirmNewPassword}
+                                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                        disabled={!newPassword}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute inset-y-0 right-0 h-full px-3"
+                                        onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                                        tabIndex={-1}
+                                        disabled={!newPassword}
+                                    >
+                                        {showConfirmNewPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     )}

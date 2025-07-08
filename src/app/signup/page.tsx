@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { addActivityLog } from "@/lib/logger";
 import { format } from "date-fns";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -49,6 +50,11 @@ export default function SignupPage() {
   
   // State for admin role restriction
   const [isAdminCreated, setIsAdminCreated] = useState(false);
+
+  // Password visibility state
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   useEffect(() => {
     // Check if an admin already exists
@@ -385,12 +391,49 @@ export default function SignupPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" required minLength={4} autoComplete="new-password" />
+              <div className="relative">
+                <Input 
+                    id="password" 
+                    name="password" 
+                    type={showPassword ? "text" : "password"} 
+                    required 
+                    minLength={4} 
+                    autoComplete="new-password" 
+                />
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute inset-y-0 right-0 h-full px-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                >
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                </Button>
+              </div>
               <p className="text-xs text-muted-foreground">Password minimal 4 karakter bebas</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Ulangi Password</Label>
-              <Input id="confirmPassword" name="confirmPassword" type="password" required autoComplete="new-password" />
+              <div className="relative">
+                <Input 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    type={showConfirmPassword ? "text" : "password"} 
+                    required 
+                    autoComplete="new-password" 
+                />
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute inset-y-0 right-0 h-full px-3"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    tabIndex={-1}
+                >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                </Button>
+              </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
