@@ -14,6 +14,7 @@ import {
   Settings,
   ShoppingCart,
   Trash2,
+  User,
   Users,
   UsersRound,
 } from "lucide-react"
@@ -127,6 +128,7 @@ export function DashboardNav() {
   if (role === 'admin') {
       bottomMenuItems.push({ id: "reset", href: "/dashboard/reset", icon: Trash2, label: "Reset Data" });
   }
+  bottomMenuItems.push({ id: "profile", href: "/dashboard/profile", icon: User, label: "Profile" });
   bottomMenuItems.push({ id: "logout", href: "/login", icon: LogOut, label: "Keluar" });
 
 
