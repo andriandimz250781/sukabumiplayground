@@ -36,6 +36,8 @@ export default function ProfilePage() {
     const [initials, setInitials] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<User | null>(null);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
 
     useEffect(() => {
         const userJson = sessionStorage.getItem('sukabumi-active-user');
@@ -62,19 +64,33 @@ export default function ProfilePage() {
     };
 
     const handleSave = () => {
-        if (!formData) return;
+        if (!formData || !user) return;
+
+        let passwordToSave = user.password;
+
+        // If the new password field is filled, user is trying to change their password
+        if (newPassword) {
+            // Check if the current password is correct
+            if (user.password !== currentPassword) {
+                toast({
+                    title: "Gagal Menyimpan",
+                    description: "Password saat ini yang Anda masukkan salah.",
+                    variant: "destructive",
+                });
+                return;
+            }
+            passwordToSave = newPassword;
+        }
 
         const usersData = localStorage.getItem('sukabumi-users');
         if (usersData) {
             let users: User[] = JSON.parse(usersData);
             const userIndex = users.findIndex(u => u.employeeId === formData.employeeId);
             if (userIndex !== -1) {
-                const originalPassword = users[userIndex].password;
-                const userToSave = { ...formData, password: formData.password && formData.password.length > 0 ? formData.password : originalPassword };
+                const userToSave = { ...formData, password: passwordToSave };
 
                 users[userIndex] = userToSave;
                 localStorage.setItem('sukabumi-users', JSON.stringify(users));
-
                 sessionStorage.setItem('sukabumi-active-user', JSON.stringify(userToSave));
 
                 setUser(userToSave);
@@ -86,6 +102,9 @@ export default function ProfilePage() {
                     description: "Informasi profil Anda telah berhasil disimpan.",
                 });
                 setIsEditing(false);
+                setCurrentPassword('');
+                setNewPassword('');
+
             } else {
                  toast({
                     title: "Gagal Menyimpan",
@@ -95,6 +114,13 @@ export default function ProfilePage() {
             }
         }
     };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+        setFormData(user);
+        setCurrentPassword('');
+        setNewPassword('');
+    }
 
     if (!user || !formData) {
         return (
@@ -177,17 +203,37 @@ export default function ProfilePage() {
                         )}
                     </div>
                      {isEditing && (
-                        <div className="space-y-1 md:col-span-2">
-                            <Label htmlFor="password">Password Baru (opsional)</Label>
-                            <Input id="password" name="password" type="password" placeholder="Isi untuk mengganti password" onChange={handleInputChange} />
-                            <p className="text-xs text-muted-foreground">Kosongkan jika tidak ingin mengubah password.</p>
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <Label htmlFor="currentPassword">Password Saat Ini</Label>
+                                <Input 
+                                    id="currentPassword" 
+                                    name="currentPassword" 
+                                    type="password"
+                                    placeholder="Isi untuk ubah password" 
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                />
+                            </div>
+                             <div className="space-y-1">
+                                <Label htmlFor="newPassword">Password Baru (opsional)</Label>
+                                <Input 
+                                    id="newPassword" 
+                                    name="newPassword" 
+                                    type="password"
+                                    placeholder="Isi password baru" 
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                />
+                                <p className="text-xs text-muted-foreground">Kosongkan jika tidak ingin mengubah.</p>
+                            </div>
                         </div>
                     )}
                 </CardContent>
                 <CardFooter className="justify-end">
                     {isEditing ? (
                         <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => { setIsEditing(false); setFormData(user); }}>Batal</Button>
+                            <Button variant="outline" onClick={handleCancel}>Batal</Button>
                             <Button onClick={handleSave}>
                                 <Save className="mr-2 h-4 w-4"/> Simpan Perubahan
                             </Button>
