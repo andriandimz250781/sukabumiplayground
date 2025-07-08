@@ -5,9 +5,17 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { Pencil, Save } from "lucide-react";
+import { addActivityLog } from "@/lib/logger";
 
 interface User {
   fullname: string;
@@ -19,17 +27,22 @@ interface User {
   currentAddress: string;
   registrationDate?: string;
   registrationTime?: string;
+  password?: string;
 }
 
 export default function ProfilePage() {
+    const { toast } = useToast();
     const [user, setUser] = useState<User | null>(null);
     const [initials, setInitials] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState<User | null>(null);
 
     useEffect(() => {
         const userJson = sessionStorage.getItem('sukabumi-active-user');
         if (userJson) {
             const userData = JSON.parse(userJson);
             setUser(userData);
+            setFormData(userData);
             if (userData.fullname) {
                  const nameInitials = userData.fullname
                   .split(' ')
@@ -41,8 +54,49 @@ export default function ProfilePage() {
             }
         }
     }, []);
+    
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (formData) {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+    };
 
-    if (!user) {
+    const handleSave = () => {
+        if (!formData) return;
+
+        const usersData = localStorage.getItem('sukabumi-users');
+        if (usersData) {
+            let users: User[] = JSON.parse(usersData);
+            const userIndex = users.findIndex(u => u.employeeId === formData.employeeId);
+            if (userIndex !== -1) {
+                const originalPassword = users[userIndex].password;
+                const userToSave = { ...formData, password: formData.password && formData.password.length > 0 ? formData.password : originalPassword };
+
+                users[userIndex] = userToSave;
+                localStorage.setItem('sukabumi-users', JSON.stringify(users));
+
+                sessionStorage.setItem('sukabumi-active-user', JSON.stringify(userToSave));
+
+                setUser(userToSave);
+                setFormData(userToSave);
+
+                addActivityLog(`Profil diperbarui oleh ${formData.fullname}`);
+                toast({
+                    title: "Profil Diperbarui",
+                    description: "Informasi profil Anda telah berhasil disimpan.",
+                });
+                setIsEditing(false);
+            } else {
+                 toast({
+                    title: "Gagal Menyimpan",
+                    description: "Pengguna tidak ditemukan di database.",
+                    variant: "destructive",
+                });
+            }
+        }
+    };
+
+    if (!user || !formData) {
         return (
             <div className="flex justify-center items-center h-full">
                 <p>Loading profile...</p>
@@ -65,8 +119,17 @@ export default function ProfilePage() {
                             <AvatarFallback>{initials}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <CardTitle className="text-2xl">{user.fullname}</CardTitle>
-                            <CardDescription>
+                            {isEditing ? (
+                                <Input
+                                    name="fullname"
+                                    value={formData.fullname}
+                                    onChange={handleInputChange}
+                                    className="text-2xl font-bold"
+                                />
+                            ) : (
+                                <CardTitle className="text-2xl">{user.fullname}</CardTitle>
+                            )}
+                             <CardDescription>
                                 {user.role === 'admin' ? 'IT Administrator' : user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                             </CardDescription>
                         </div>
@@ -74,30 +137,67 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">ID Karyawan</p>
-                        <p>{user.role === 'admin' ? 'IT ADMINISTRATOR' : user.employeeId}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">No. Handphone</p>
-                        <p>{user.phone}</p>
+                        <Label>ID Karyawan</Label>
+                        <p className="p-2 h-10 border rounded-md bg-muted flex items-center">{user.role === 'admin' ? 'IT ADMINISTRATOR' : user.employeeId}</p>
                     </div>
                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Tanggal Lahir</p>
-                        <p>{user.dateOfBirth}</p>
+                        <Label>Tanggal Registrasi</Label>
+                        <p className="p-2 h-10 border rounded-md bg-muted flex items-center">{user.registrationDate} {user.registrationTime}</p>
                     </div>
                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Tanggal Registrasi</p>
-                        <p>{user.registrationDate} {user.registrationTime}</p>
+                        <Label htmlFor="phone">No. Handphone</Label>
+                        {isEditing ? (
+                            <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} />
+                        ) : (
+                            <p className="p-2 h-10 border rounded-md bg-muted flex items-center">{user.phone}</p>
+                        )}
+                    </div>
+                     <div className="space-y-1">
+                        <Label htmlFor="dateOfBirth">Tanggal Lahir</Label>
+                         {isEditing ? (
+                            <Input id="dateOfBirth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} placeholder="DD-MM-YYYY" />
+                        ) : (
+                            <p className="p-2 h-10 border rounded-md bg-muted flex items-center">{user.dateOfBirth}</p>
+                        )}
                     </div>
                     <div className="space-y-1 md:col-span-2">
-                        <p className="text-sm font-medium text-muted-foreground">Alamat KTP</p>
-                        <p>{user.address}</p>
+                        <Label htmlFor="address">Alamat KTP</Label>
+                         {isEditing ? (
+                            <Textarea id="address" name="address" value={formData.address} onChange={handleInputChange} />
+                        ) : (
+                            <p className="p-2 min-h-[80px] border rounded-md bg-muted flex items-center">{user.address}</p>
+                        )}
                     </div>
                     <div className="space-y-1 md:col-span-2">
-                        <p className="text-sm font-medium text-muted-foreground">Alamat Saat Ini</p>
-                        <p>{user.currentAddress}</p>
+                        <Label htmlFor="currentAddress">Alamat Saat Ini</Label>
+                         {isEditing ? (
+                            <Textarea id="currentAddress" name="currentAddress" value={formData.currentAddress} onChange={handleInputChange} />
+                        ) : (
+                            <p className="p-2 min-h-[80px] border rounded-md bg-muted flex items-center">{user.currentAddress}</p>
+                        )}
                     </div>
+                     {isEditing && (
+                        <div className="space-y-1 md:col-span-2">
+                            <Label htmlFor="password">Password Baru (opsional)</Label>
+                            <Input id="password" name="password" type="password" placeholder="Isi untuk mengganti password" onChange={handleInputChange} />
+                            <p className="text-xs text-muted-foreground">Kosongkan jika tidak ingin mengubah password.</p>
+                        </div>
+                    )}
                 </CardContent>
+                <CardFooter className="justify-end">
+                    {isEditing ? (
+                        <div className="flex gap-2">
+                            <Button variant="outline" onClick={() => { setIsEditing(false); setFormData(user); }}>Batal</Button>
+                            <Button onClick={handleSave}>
+                                <Save className="mr-2 h-4 w-4"/> Simpan Perubahan
+                            </Button>
+                        </div>
+                    ) : (
+                        <Button onClick={() => setIsEditing(true)}>
+                            <Pencil className="mr-2 h-4 w-4"/> Edit Profil
+                        </Button>
+                    )}
+                </CardFooter>
             </Card>
         </div>
     );
